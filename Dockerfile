@@ -20,9 +20,5 @@ WORKDIR /
 # Expose port
 EXPOSE 8000
 
-# Start vLLM server
-CMD ["python", "-m", "vllm.entrypoints.openai.api_server", \
-     "--model", "datalab-to/chandra", \
-     "--trust-remote-code", \
-     "--port", "8000", \
-     "--host", "0.0.0.0"]
+# Start the RunPod handler (which launches vLLM as needed)
+CMD ["python", "-u", "/handler.py"]

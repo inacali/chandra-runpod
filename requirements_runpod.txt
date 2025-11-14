@@ -1,9 +1,7 @@
 # Requirements for RunPod vLLM Docker deployment
 # Core dependencies
+runpod>=1.6.5
 vllm>=0.6.0
-fastapi>=0.104.1
-uvicorn[standard]>=0.24.0
-python-multipart>=0.0.6
 
 # Image processing
 pillow>=10.1.0
