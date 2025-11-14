@@ -5,22 +5,14 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-RUN pip install --no-cache-dir \
-    vllm==0.6.0 \
-    fastapi==0.104.1 \
-    uvicorn==0.24.0 \
-    python-multipart==0.0.6 \
-    pillow==10.1.0 \
-    pypdf2==3.0.1 \
-    filetype==1.2.0
+# Copy requirements file first (for better Docker layer caching)
+COPY requirements_runpod.txt /requirements.txt
+
+# Install Python dependencies from requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
 # Copy handler
 COPY handler_runpod.py /handler.py
-COPY requirements.txt /requirements.txt
-
-# Install Chandra (if needed for preprocessing)
-RUN pip install --no-cache-dir chandra-ocr==0.1.8
 
 # Set working directory
 WORKDIR /
