@@ -1,0 +1,36 @@
+FROM runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+RUN pip install --no-cache-dir \
+    vllm==0.6.0 \
+    fastapi==0.104.1 \
+    uvicorn==0.24.0 \
+    python-multipart==0.0.6 \
+    pillow==10.1.0 \
+    pypdf2==3.0.1 \
+    filetype==1.2.0
+
+# Copy handler
+COPY handler_runpod.py /handler.py
+COPY requirements.txt /requirements.txt
+
+# Install Chandra (if needed for preprocessing)
+RUN pip install --no-cache-dir chandra-ocr==0.1.8
+
+# Set working directory
+WORKDIR /
+
+# Expose port
+EXPOSE 8000
+
+# Start vLLM server
+CMD ["python", "-m", "vllm.entrypoints.openai.api_server", \
+     "--model", "datalab-to/chandra", \
+     "--trust-remote-code", \
+     "--port", "8000", \
+     "--host", "0.0.0.0"]
